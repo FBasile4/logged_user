@@ -1,0 +1,44 @@
+# ... Deployment YAML definition
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: appuserlogged
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: appuserlogged
+  template:
+    metadata:
+      labels:
+        app: appuserlogged
+    spec:
+      containers:
+      - image: appuserlogged:latest
+        name: appuserlogged
+        ports:
+          - containerPort: 8084
+        env:
+          - name: SPRING_DATASOURCE_URL
+            value: jdbc:postgresql://postgresql:5432/postgresDB?useSSL=false
+          - name: SPRING_DATASOURCE_USERNAME
+            value: postgres
+          - name: SPRING_DATASOURCE_PASSWORD
+            value: postgres
+          - name: SPRING_JPA_HIBERNATE_DDL_AUTO
+            value: update
+        imagePullPolicy: IfNotPresent
+---
+# ... Service YAML definition
+apiVersion: v1
+kind: Service
+metadata:
+  name: appuserlogged-service
+spec:
+  ports:
+  - port: 8084
+    protocol: TCP
+    targetPort: 8084
+  selector:
+    app: appuserlogged
+  type: NodePort
