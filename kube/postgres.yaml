@@ -1,26 +1,13 @@
 apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: postgresql-pvc
-  labels:
-    app: postgresql
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 256Mi
----
-apiVersion: v1
 kind: Service
 metadata:
-  name: postgresql
+  name: postgresql-logged
   labels:
-    app: postgresql
+    app: postgresql-logged
     tier: database
 spec:
   selector:
-    app: postgresql
+    app: postgresql-logged
     tier: database
   ports:
     - port: 5432
@@ -29,18 +16,18 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: postgresql
+  name: postgresql-logged
   labels:
-    app: postgresql
+    app: postgresql-logged
     tier: database
 spec:
   selector:
     matchLabels:
-      app: postgresql
+      app: postgresql-logged
   template:
     metadata:
       labels:
-        app: postgresql
+        app: postgresql-logged
         tier: database
     spec:
       containers:
@@ -56,10 +43,25 @@ spec:
             - name: POSTGRES_PASSWORD
               value: postgres
           volumeMounts:
-            - name: postegresql-pvc
+            - name: postegresql-pvc-logged
               mountPath: /var/lib/postgresql/data
           imagePullPolicy: IfNotPresent
       volumes:
-        - name: postegresql-pvc
+        - name: postegresql-pvc-logged
           persistentVolumeClaim:
-            claimName: postgresql-pvc
+            claimName: postgresql-pvc-logged
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgresql-pvc-logged
+  labels:
+    app: postgresql-logged
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 256Mi
+
+

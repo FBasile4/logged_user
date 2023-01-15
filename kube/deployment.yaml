@@ -14,13 +14,13 @@ spec:
         app: appuserlogged
     spec:
       containers:
-      - image: appuserlogged:latest
+      - image: docker.io/basile1/appuserlogged:latest
         name: appuserlogged
         ports:
           - containerPort: 8084
         env:
           - name: SPRING_DATASOURCE_URL
-            value: jdbc:postgresql://postgresql:5432/postgresDB?useSSL=false
+            value: jdbc:postgresql://postgresql-logged:5432/postgresDB?useSSL=false
           - name: SPRING_DATASOURCE_USERNAME
             value: postgres
           - name: SPRING_DATASOURCE_PASSWORD
@@ -41,4 +41,4 @@ spec:
     targetPort: 8084
   selector:
     app: appuserlogged
-  type: NodePort
+  type: ClusterIP
